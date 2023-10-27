@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Models;
 
@@ -12,5 +8,5 @@ using TodoApi.Models;
         {
         }
 
-        public DbSet<TodoApi.Models.TodoItem> TodoItem { get; set; } = default!;
+        public DbSet<TodoItem> TodoItem { get; set; } = default!;
     }
