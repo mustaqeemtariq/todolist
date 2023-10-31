@@ -19,7 +19,8 @@ namespace TodoList.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItem()
         {
-            if (_context.TodoItem == null)
+            var todoItems = await _context.TodoItem.ToListAsync();
+            if (!todoItems.Any())
             {
                 return NotFound();
             }
@@ -29,10 +30,6 @@ namespace TodoList.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
         {
-            if (_context.TodoItem == null)
-            {
-                return NotFound();
-            }
             var todoItem = await _context.TodoItem.FindAsync(id);
 
             if (todoItem == null)
@@ -49,6 +46,11 @@ namespace TodoList.Controllers
             if (id != todoItem.Id)
             {
                 return BadRequest();
+            }
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
 
             _context.Entry(todoItem).State = EntityState.Modified;
@@ -76,6 +78,15 @@ namespace TodoList.Controllers
 
         public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
+            if (todoItem == null)
+            {
+                return BadRequest("TodoItem object is null.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _context.TodoItem.Add(todoItem);
             await _context.SaveChangesAsync();
 
@@ -85,10 +96,6 @@ namespace TodoList.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTodoItem(long id)
         {
-            if (_context.TodoItem == null)
-            {
-                return NotFound();
-            }
             var todoItem = await _context.TodoItem.FindAsync(id);
             if (todoItem == null)
             {
